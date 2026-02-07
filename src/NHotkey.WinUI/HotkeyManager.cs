@@ -18,7 +18,7 @@ using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace NHotkey.WinUI
 {
-    public class HotkeyManager : HotkeyManagerBase
+    public class HotkeyManager : HotkeyManagerBase, IDisposable
     {
         private HotkeyManager()
         {
@@ -32,14 +32,6 @@ namespace NHotkey.WinUI
             _wndProcHook = WndProcHook;
             PInvoke.SetWindowLongPtr(hWND, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC, 
                 Marshal.GetFunctionPointerForDelegate(_wndProcHook));
-        }
-
-        ~HotkeyManager()
-        {
-            IntPtr handle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
-            HWND hWND = new(handle);
-            PInvoke.SetWindowLongPtr(hWND, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC,
-               Marshal.GetFunctionPointerForDelegate(_originalWndProc));
         }
 
         #region Singleton implementation
@@ -112,5 +104,44 @@ namespace NHotkey.WinUI
         private WndProc _wndProcHook;
 
         public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        #region dispose
+        private bool disposed = false; // To detect redundant calls
+                                       // ... other resources ...
+        
+        // Finalizer (destructor)
+        ~HotkeyManager()
+        {
+            Dispose(false);
+        }
+
+        // Public implementation of Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this); // Suppress finalizer
+        }
+
+        // Protected virtual method for cleanup
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources here
+                    _window.Close();
+                }
+
+                // Clean up unmanaged resources here
+                IntPtr handle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
+                HWND hWND = new(handle);
+                PInvoke.SetWindowLongPtr(hWND, WINDOW_LONG_PTR_INDEX.GWL_WNDPROC,
+                   Marshal.GetFunctionPointerForDelegate(_originalWndProc));
+
+                disposed = true;
+            }
+        }
+        #endregion
     }
 }
