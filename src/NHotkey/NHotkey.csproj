@@ -6,20 +6,12 @@
 
   <PropertyGroup Label="Package properties">
     <Description>A managed library to handle global hotkeys in Windows Forms and WPF applications. NOTE: this package doesn't contain a concrete HotkeyManager implementation; you should add either the NHotkey.Wpf or NHotkey.WindowsForms package to get one.</Description>
-<<<<<<< HEAD
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-=======
-    <TargetFramework>net10.0</TargetFramework>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103" />
->>>>>>> 6d2097c6fafb5f68aa257f9a750b8bcfce51ea1e
     <PackageReference Update="MinVer" Version="7.0.0" />
   </ItemGroup>
 
